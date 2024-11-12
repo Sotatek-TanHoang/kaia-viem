@@ -1,0 +1,26 @@
+{
+  "name": "test-viem",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "start": "node dist/example.js",
+    "dev": "tsx ./src/example.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@kaiachain/ethers-ext": "^1.1.0",
+    "@kaiachain/js-ext-core": "^1.1.0",
+    "ethers": "^6.13.4",
+    "tsc": "^2.0.4",
+    "viem": "^2.21.41"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3"
+  }
+}
