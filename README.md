@@ -3,4 +3,4 @@
 2. Install
     - npm install
 3. Run example
-    - npx tsx ./src/<example>.ts
+    - npx tsx ./src/`example.ts`
