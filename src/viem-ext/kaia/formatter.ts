@@ -10,10 +10,8 @@ export const formatters = {
       const transaction = {} as KaiaTransactionRequest;
       if (args.type && isKlaytnTxType(args.type)) {
         transaction.type = args.type;
-        transaction.gasPrice = 25000n;
-        transaction.gasLimit = 50000n;
+        transaction.value = args.value ?? 0;
       }
-      console.log("in kaia tx formatter", transaction, args);
       return transaction;
     },
   }),

@@ -2,7 +2,7 @@ import type {
   TransactionRequest as EthersTransactionRequest,
   TransactionResponse,
 } from "ethers";
-import { OneOf, TransactionSerializable } from "viem";
+import { OneOf, Signature, TransactionSerializable } from "viem";
 import {
   TransactionSerializableCIP64,
   TransactionSerializableDeposit,
@@ -19,8 +19,12 @@ export interface KaiaTransactionRequest
   feePayer?: string;
   feePayerSignatures?: any[];
 }
+
 export type KaiaTransactionSerializable = OneOf<
   | TransactionSerializable
   | TransactionSerializableCIP64
   | TransactionSerializableDeposit
+  | KaiaTransactionRequest
 >;
+
+export type KaiaTransactionSerialized = `0x${string}`;

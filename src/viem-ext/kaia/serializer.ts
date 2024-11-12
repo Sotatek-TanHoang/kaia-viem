@@ -1,52 +1,104 @@
 import {
   ChainSerializers,
-  OneOf,
   TransactionSerializable,
-  serializeTransaction as serializeTransactionDefault
+  serializeTransaction as serializeTransactionDefault,
+  Signature,
 } from "viem";
-import { assert,  Log,  Signature } from "ethers";
+import { assert } from "ethers";
 import {
-  TransactionSerializableCIP64,
-  TransactionSerializableDeposit,
-} from "viem/chains";
-import { isFeePayerSigTxType, isKlaytnTxType, KlaytnTxFactory, TxType } from "@kaiachain/js-ext-core";
-import { KaiaTransactionRequest } from "./types/transactions";
+  isKlaytnTxType,
+  KlaytnTxFactory,
+  TxType,
+  SignatureLike,
+  isFeePayerSigTxType,
+} from "@kaiachain/js-ext-core";
+import {
+  KaiaTransactionSerializable,
+  KaiaTransactionSerialized,
+} from "./types/transactions";
+// move this to helper
+const convertSignatureToKaiaFormat = (
+  signature: Signature,
+  chainId: number
+): SignatureLike => {
+  const { r, s, yParity } = signature;
+  const v = Number(yParity) + chainId * 2 + 35;
+  return {
+    r,
+    s,
+    v,
+  };
+};
 
 export const serializers = {
   transaction: serializeTransaction,
 } as const satisfies ChainSerializers;
-export type KaiaTransactionSerializable = OneOf<
-  | TransactionSerializable
-  | TransactionSerializableCIP64
-  | TransactionSerializableDeposit
-  | KaiaTransactionRequest
->;
+
 export function serializeTransaction<
   const transaction extends KaiaTransactionSerializable
->(transaction: transaction): KaiaTransactionSerialized {
-  return serializeTransactionKaia(transaction);
-}
-export type KaiaTransactionSerialized = `0x${string}`;
-function serializeTransactionKaia(
-  transaction: KaiaTransactionSerializable,
+>(
+  transaction: transaction,
   signature?: Signature | undefined
 ): KaiaTransactionSerialized {
-  console.log(transaction, "in signing");
-  if(!isKlaytnTxType(transaction.type as any )){
-    console.log('faling back to default serializer');
-    return serializeTransactionDefault(transaction as TransactionSerializable)
+  return serializeTransactionKaia(transaction, signature);
+}
+
+function serializeTransactionKaia(
+  transaction: KaiaTransactionSerializable,
+  signature?: Signature
+): KaiaTransactionSerialized {
+  if (!isKlaytnTxType(transaction.type as TxType)) {
+    return serializeTransactionDefault(
+      transaction as TransactionSerializable,
+      signature
+    );
   }
-  assert(transaction.maxFeePerGas, "invalid maxFeePerGas", "BAD_DATA");
-  assert(transaction.gas, "invalid gas", "BAD_DATA");
-
+  assert(transaction.chainId, "invalid chainId", "BAD_DATA");
   const txObj: any = { ...transaction };
-  txObj.gasPrice = transaction.maxFeePerGas * transaction.gas;
-  txObj.gasLimit = 21000;
-  const klaytnTx = KlaytnTxFactory.fromObject(txObj);
 
+  // TODO: remove this to prepareTransactionRequest
+  if (transaction.maxFeePerGas && transaction.gas) {
+    // txObj.gasPrice = transaction.maxFeePerGas * transaction.gas;
+    txObj.gasPrice = 27500000000;
+    txObj.gasLimit = 210000;
+  }
+
+  const klaytnTx = KlaytnTxFactory.fromObject(txObj);
+  if (!signature) {
+    // this function is ran two times in signTransaction.
+    return klaytnTx.sigRLP() as `0x${string}`;
+  }
+  klaytnTx.addSenderSig(convertSignatureToKaiaFormat(signature, txObj.chainId));
   if (isFeePayerSigTxType(klaytnTx.type)) {
     return klaytnTx.senderTxHashRLP() as `0x${string}`;
-  } else {
-    return klaytnTx.txHashRLP() as `0x${string}`;
   }
+  return klaytnTx.txHashRLP() as `0x${string}`;
+}
+export function serializeTransactionForFeePayerKaia(expectedFeePayer: string) {
+  return function (
+    transaction: KaiaTransactionSerializable,
+    signature?: Signature
+  ): KaiaTransactionSerialized {
+    if (!transaction.chainId) {
+      transaction.chainId = 1001;
+    }
+    const txObj: any = { ...transaction };
+    // TODO: remove this to prepareTransactionRequest
+    if (transaction.maxFeePerGas && transaction.gas) {
+      txObj.gasPrice = 27500000000;
+      txObj.gasLimit = 500000;
+    }
+    txObj.feePayer = expectedFeePayer;
+
+    const klaytnTx = KlaytnTxFactory.fromObject(txObj);
+
+    if (!signature) {
+      // this function is ran two times in signTransaction.
+      return klaytnTx.sigFeePayerRLP() as `0x${string}`;
+    }
+    klaytnTx.addFeePayerSig(
+      convertSignatureToKaiaFormat(signature, txObj.chainId)
+    );
+    return klaytnTx.txHashRLP() as `0x${string}`;
+  };
 }

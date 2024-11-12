@@ -1,16 +1,13 @@
 import { Account, Chain, Transport, WalletClient } from "viem";
-import type {
-  KaiaTransactionResponse,
-} from "../types/transactions.js";
-import { sendTransactionAsFeePayer } from "../methods/send-transaction-as-fee-payer.js";
+import { signTransactionAsFeePayer } from "../methods/sign-transaction-as-fee-payer.js";
 
 export type KaiaWalletAction<
   chain extends Chain | undefined = Chain | undefined,
   account extends Account | undefined = Account | undefined
 > = {
-  sendTransactionAsFeePayer: (
+  signTransactionAsFeePayer: (
     parameters: string
-  ) => Promise<KaiaTransactionResponse>;
+  ) => Promise<string>;
 };
 
 export function kaiaWalletAction() {
@@ -22,8 +19,8 @@ export function kaiaWalletAction() {
     client: WalletClient
   ): KaiaWalletAction<chain, account> => {
     return {
-      sendTransactionAsFeePayer: (senderSignedTransaction: string) =>
-        sendTransactionAsFeePayer(client, senderSignedTransaction),
+      signTransactionAsFeePayer: (senderSignedTransaction: string) =>
+        signTransactionAsFeePayer(client, senderSignedTransaction),
     };
   };
 }
