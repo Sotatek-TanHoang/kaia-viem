@@ -24,13 +24,14 @@ const txWallet = createWalletClient({
   console.log("tx wallet", txWallet.account.address);
 
   const txRequest = await senderWallet.prepareTransactionRequest({
-    // account: senderWallet.account,
+    // account: senderWallet.account, this params will override txWallet and will sign the tx in line 35
     from: senderWallet.account.address, // the from address. must be differ from address that sign the transaction
     to: "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
     value: 0,
     type: TxType.ValueTransfer,
   });
   console.log("txRequest", txRequest);
+  // the tx is signed by different wallet that in 'from'
   const signedTx = await txWallet.signTransaction(txRequest as any);
   const sentTx = await txWallet.request({
     method: "kaia_sendRawTransaction" as any,
