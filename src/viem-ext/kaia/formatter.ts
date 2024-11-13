@@ -11,6 +11,7 @@ export const formatters = {
       if (args.type && isKlaytnTxType(args.type)) {
         transaction.type = args.type;
         transaction.value = args.value ?? 0;
+        transaction.from = args.from;
       }
       return transaction;
     },

@@ -18,8 +18,7 @@ const feePayerWallet = createWalletClient({
   account: privateKeyToAccount(
     "0x9435261ed483b6efa3886d6ad9f64c12078a0e28d8d80715c773e16fc000cff4"
   ),
-}).extend(kaiaWalletAction());
-// Example usage
+}).extend(kaiaWalletAction()); // add fee payer methods custom for kaia
 (async () => {
   const txRequest = await senderWallet.prepareTransactionRequest({
     account: senderWallet.account,
@@ -37,8 +36,6 @@ const feePayerWallet = createWalletClient({
     params: [feePayerSignedTx as any],
   });
   console.log("value transfer tx", res);
-
-
 
   // account update
   const pub = ethers.SigningKey.computePublicKey(

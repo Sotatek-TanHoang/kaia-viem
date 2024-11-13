@@ -63,24 +63,24 @@ const feePayerWallet = createWalletClient({
   });
   console.log("contract interaction tx", sentTx);
 
-  // // fee payer
-  // const tx2 = await senderWallet.prepareTransactionRequest({
-  //   type: TxType.FeeDelegatedSmartContractExecution,
-  //   account: senderWallet.account,
-  //   to: contractAddr,
-  //   value: 0,
-  //   data,
-  // });
-  // const signedTx2 = await senderWallet.signTransaction(tx2 as any);
+  // fee payer
+  const tx2 = await senderWallet.prepareTransactionRequest({
+    type: TxType.FeeDelegatedSmartContractExecution,
+    account: senderWallet.account,
+    to: contractAddr,
+    value: 0,
+    data,
+  });
+  const signedTx2 = await senderWallet.signTransaction(tx2 as any);
 
-  // const feePayerSignedTx = await feePayerWallet.signTransactionAsFeePayer(
-  //   signedTx2 as any
-  // );
-  // console.log(feePayerSignedTx,123);
+  const feePayerSignedTx = await feePayerWallet.signTransactionAsFeePayer(
+    signedTx2 as any
+  );
+  console.log(feePayerSignedTx,123);
 
-  // const sentFeePayerTx = await feePayerWallet.request({
-  //   method: "kaia_sendRawTransaction" as any,
-  //   params: [feePayerSignedTx as any],
-  // });
-  // console.log("fee payer contract execution tx", sentFeePayerTx);
+  const sentFeePayerTx = await feePayerWallet.request({
+    method: "kaia_sendRawTransaction" as any,
+    params: [feePayerSignedTx as any],
+  });
+  console.log("fee payer contract execution tx", sentFeePayerTx);
 })();
