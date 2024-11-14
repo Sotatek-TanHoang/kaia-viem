@@ -23,11 +23,12 @@ const feePayerWallet = createWalletClient({
   const txRequest = await senderWallet.prepareTransactionRequest({
     account: senderWallet.account,
     to: "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
-    value: 0,
+    value: 123,
     type: TxType.FeeDelegatedValueTransfer,
   });
   const signedTx = await senderWallet.signTransaction(txRequest as any);
-
+  console.log(signedTx);
+  
   const feePayerSignedTx = await feePayerWallet.signTransactionAsFeePayer(
     signedTx as any
   );

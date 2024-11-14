@@ -10,7 +10,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "@kaiachain/ethers-ext": "^1.1.0",
     "@kaiachain/js-ext-core": "^1.1.0",

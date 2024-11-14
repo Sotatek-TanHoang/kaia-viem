@@ -1,8 +1,8 @@
 import { http, createWalletClient } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { kairos } from "viem/chains";
-import { chainConfig } from "./viem-ext/kaia";
-import { TxType } from "@kaiachain/js-ext-core";
+import { chainConfig, kaiaWalletAction } from "./viem-ext/kaia";
+import { formatKaia, parseKaia, toPeb, TxType } from "@kaiachain/js-ext-core";
 // wallet that will populate the tx from field
 const senderWallet = createWalletClient({
   chain: { ...kairos, ...chainConfig },
@@ -18,21 +18,20 @@ const txWallet = createWalletClient({
   account: privateKeyToAccount(
     "0xc9668ccd35fc20587aa37a48838b48ccc13cf14dd74c8999dd6a480212d5f7ac"
   ),
-});
+}).extend(kaiaWalletAction());
 (async () => {
   // reference to ethers-ext/example/v6/accountKey/sign_tx_AccountKeyRoleBased.js
   console.log("tx wallet", txWallet.account.address);
 
   const txRequest = await senderWallet.prepareTransactionRequest({
-    // account: senderWallet.account, this params will override txWallet and will sign the tx in line 35
-    from: senderWallet.account.address, // the from address. must be differ from address that sign the transaction
-    to: "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
-    value: 0,
+    account: senderWallet.account,
+    to: "0xb41319B12ba00e14a54CF3eE6C98c3EC9E27e0CA",
+    value: toPeb("20", "kaia"),
     type: TxType.ValueTransfer,
   });
   console.log("txRequest", txRequest);
   // the tx is signed by different wallet that in 'from'
-  const signedTx = await txWallet.signTransaction(txRequest as any);
+  const signedTx = await txWallet.signKaiaTransaction(txRequest as any);
   const sentTx = await txWallet.request({
     method: "kaia_sendRawTransaction" as any,
     params: [signedTx],

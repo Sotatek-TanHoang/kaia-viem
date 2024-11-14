@@ -43,7 +43,7 @@ export function serializeTransaction<
   return serializeTransactionKaia(transaction, signature);
 }
 
-function serializeTransactionKaia(
+export function serializeTransactionKaia(
   transaction: KaiaTransactionSerializable,
   signature?: Signature
 ): KaiaTransactionSerialized {
@@ -53,7 +53,7 @@ function serializeTransactionKaia(
       signature
     );
   }
-  assert(transaction.chainId, "invalid chainId", "BAD_DATA");
+  
   const txObj: any = { ...transaction };
   
   // TODO: remove this to prepareTransactionRequest
@@ -62,7 +62,6 @@ function serializeTransactionKaia(
     txObj.gasPrice = 27500000000;
     txObj.gasLimit = 210000;
   }
-  console.log("normal tx serializer", txObj);
 
   const klaytnTx = KlaytnTxFactory.fromObject(txObj);
   if (!signature) {
@@ -80,9 +79,7 @@ export function serializeTransactionForFeePayerKaia(expectedFeePayer: string) {
     transaction: KaiaTransactionSerializable,
     signature?: Signature
   ): KaiaTransactionSerialized {
-    if (!transaction.chainId) {
-      transaction.chainId = 1001;
-    }
+    
     const txObj: any = { ...transaction };
     // TODO: remove this to prepareTransactionRequest
     if (transaction.maxFeePerGas && transaction.gas) {

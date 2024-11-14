@@ -1,3 +1,4 @@
+import { TxType } from "@kaiachain/js-ext-core";
 import type {
   TransactionRequest as EthersTransactionRequest,
   TransactionResponse,
@@ -8,7 +9,9 @@ import {
   TransactionSerializableDeposit,
 } from "viem/chains";
 
-export interface KaiaTransactionResponse extends TransactionResponse {}
+export interface KaiaTransactionResponse extends TransactionResponse {
+  type: TxType
+}
 
 export interface KaiaTransactionRequest
   extends Omit<
@@ -18,6 +21,7 @@ export interface KaiaTransactionRequest
   txSignatures?: any[];
   feePayer?: string;
   feePayerSignatures?: any[];
+  type?: TxType
 }
 
 export type KaiaTransactionSerializable = OneOf<

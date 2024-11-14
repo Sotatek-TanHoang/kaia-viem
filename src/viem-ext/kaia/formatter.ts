@@ -9,9 +9,9 @@ export const formatters = {
     ): Promise<KaiaTransactionRequest> {
       const transaction = {} as KaiaTransactionRequest;
       if (args.type && isKlaytnTxType(args.type)) {
-        transaction.type = args.type;
-        transaction.value = args.value ?? 0;
-        transaction.from = args.from;
+        (transaction as any).type = 'legacy';
+        // transaction.value = args.value ?? 0;
+        // transaction.from = args.from;
       }
       return transaction;
     },

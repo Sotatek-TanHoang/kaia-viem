@@ -1,12 +1,19 @@
 import { Account, Chain, Transport, WalletClient } from "viem";
-import { signTransactionAsFeePayer } from "../methods/sign-transaction-as-fee-payer.js";
+import {
+  signTransactionAsFeePayer,
+} from "../methods/sign-transaction-as-fee-payer.js";
+import { KaiaTransactionSerializable } from "../types/transactions.js";
+import { signKaiaTransaction } from "../methods/sign-transaction.js";
 
 export type KaiaWalletAction<
   chain extends Chain | undefined = Chain | undefined,
   account extends Account | undefined = Account | undefined
 > = {
   signTransactionAsFeePayer: (
-    parameters: string
+    parameters: string | KaiaTransactionSerializable
+  ) => Promise<string>;
+  signKaiaTransaction: (
+    parameters: string | KaiaTransactionSerializable
   ) => Promise<string>;
 };
 
@@ -19,8 +26,12 @@ export function kaiaWalletAction() {
     client: WalletClient
   ): KaiaWalletAction<chain, account> => {
     return {
-      signTransactionAsFeePayer: (senderSignedTransaction: string) =>
-        signTransactionAsFeePayer(client, senderSignedTransaction),
+      signTransactionAsFeePayer: (
+        senderSignedTransaction: string | KaiaTransactionSerializable
+      ) => signTransactionAsFeePayer(client, senderSignedTransaction),
+      signKaiaTransaction: (
+        senderSignedTransaction: string | KaiaTransactionSerializable
+      ) => signKaiaTransaction(client, senderSignedTransaction),
     };
   };
 }
