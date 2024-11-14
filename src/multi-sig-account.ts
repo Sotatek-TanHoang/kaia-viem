@@ -37,15 +37,22 @@ const wallet3 = createWalletClient({
   account: privateKeyToAccount(senderNewPriv3),
 }).extend(kaiaWalletAction());
 
+// fee delegated
+const feePayerWallet = createWalletClient({
+  chain: { ...kairos, ...chainConfig },
+  transport: http(),
+  account: privateKeyToAccount(
+    "0x9435261ed483b6efa3886d6ad9f64c12078a0e28d8d80715c773e16fc000cff4"
+  ),
+}).extend(kaiaWalletAction()); // add fee payer methods custom for kaia
 (async () => {
   // reference to ethers-ext/example/v6/accountKey/sign_tx_AccountKeyRoleBased.js
-  console.log("tx wallet", wallet0.account.address);
-
   const txRequest = await wallet0.prepareTransactionRequest({
     account: wallet0.account,
     to: recieverAddr,
     value: 0,
     type: TxType.ValueTransfer,
+    // type: TxType.FeeDelegatedValueTransfer,
   });
   console.log("txRequest", txRequest);
 
@@ -57,10 +64,20 @@ const wallet3 = createWalletClient({
 
   const signedTx3 = await wallet3.signKaiaTransaction(signedTx2 as any);
   console.log(signedTx3);
-
+  
   const sentTx = await wallet3.request({
     method: "kaia_sendRawTransaction" as any,
     params: [signedTx3],
   });
   console.log("value transfer tx with role-based account", sentTx);
+
+  // const feePayerSignedTx=await feePayerWallet.signTransactionAsFeePayer(signedTx3)
+  // const feePayerSentTx = await wallet3.request({
+  //   method: "kaia_sendRawTransaction" as any,
+  //   params: [feePayerSignedTx],
+  // });
+  // console.log("fee delegated value transfer tx with role-based account", feePayerSentTx);
+
+
+
 })();
