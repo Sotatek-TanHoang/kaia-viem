@@ -31,7 +31,7 @@ const txWallet = createWalletClient({
   });
   console.log("txRequest", txRequest);
   // the tx is signed by different wallet that in 'from'
-  const signedTx = await txWallet.signKaiaTransaction(txRequest as any);
+  const signedTx = await txWallet.signTransaction(txRequest as any);
   const sentTx = await txWallet.request({
     method: "kaia_sendRawTransaction" as any,
     params: [signedTx],

@@ -3,7 +3,7 @@ import { KaiaTransactionSerializable } from "../types/transactions";
 import { getTransactionRequest } from "../utils";
 import { serializeTransactionKaia } from "../serializer";
 
-export const signKaiaTransaction = async (
+export const signTransaction = async (
   client: WalletClient,
   senderTxHashRLP: string | KaiaTransactionSerializable
 ): Promise<string> => {
@@ -11,7 +11,7 @@ export const signKaiaTransaction = async (
 
   // populate chain id since this field is omitted in rlp format.
   txObj.chainId = client.chain?.id;
-  
+
   if (client.account) {
     return client.account.signTransaction!(txObj as any, {
       serializer: serializeTransactionKaia,

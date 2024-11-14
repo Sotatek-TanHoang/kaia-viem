@@ -56,13 +56,13 @@ const feePayerWallet = createWalletClient({
   });
   console.log("txRequest", txRequest);
 
-  const signedTx1 = await wallet1.signKaiaTransaction(txRequest as any);
+  const signedTx1 = await wallet1.signTransaction(txRequest as any);
   console.log(signedTx1);
 
-  const signedTx2 = await wallet2.signKaiaTransaction(signedTx1 as any);
+  const signedTx2 = await wallet2.signTransaction(signedTx1 as any);
   console.log(signedTx2);
 
-  const signedTx3 = await wallet3.signKaiaTransaction(signedTx2 as any);
+  const signedTx3 = await wallet3.signTransaction(signedTx2 as any);
   console.log(signedTx3);
   
   const sentTx = await wallet3.request({

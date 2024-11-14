@@ -3,7 +3,7 @@ import {
   signTransactionAsFeePayer,
 } from "../methods/sign-transaction-as-fee-payer.js";
 import { KaiaTransactionSerializable } from "../types/transactions.js";
-import { signKaiaTransaction } from "../methods/sign-transaction.js";
+import { signTransaction } from "../methods/sign-transaction.js";
 
 export type KaiaWalletAction<
   chain extends Chain | undefined = Chain | undefined,
@@ -12,7 +12,7 @@ export type KaiaWalletAction<
   signTransactionAsFeePayer: (
     parameters: string | KaiaTransactionSerializable
   ) => Promise<string>;
-  signKaiaTransaction: (
+  signTransaction: (
     parameters: string | KaiaTransactionSerializable
   ) => Promise<string>;
 };
@@ -29,9 +29,9 @@ export function kaiaWalletAction() {
       signTransactionAsFeePayer: (
         senderSignedTransaction: string | KaiaTransactionSerializable
       ) => signTransactionAsFeePayer(client, senderSignedTransaction),
-      signKaiaTransaction: (
+      signTransaction: (
         senderSignedTransaction: string | KaiaTransactionSerializable
-      ) => signKaiaTransaction(client, senderSignedTransaction),
+      ) => signTransaction(client, senderSignedTransaction),
     };
   };
 }
