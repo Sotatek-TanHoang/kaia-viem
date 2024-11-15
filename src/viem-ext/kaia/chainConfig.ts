@@ -3,5 +3,5 @@ import { serializers } from "./serializer";
 
 export const chainConfig = {
     formatters,
-    serializers
+    serializers,
 } as const

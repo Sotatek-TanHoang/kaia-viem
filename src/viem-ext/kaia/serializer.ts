@@ -4,31 +4,18 @@ import {
   serializeTransaction as serializeTransactionDefault,
   Signature,
 } from "viem";
-import { assert } from "ethers";
 import {
   isKlaytnTxType,
   KlaytnTxFactory,
   TxType,
-  SignatureLike,
   isFeePayerSigTxType,
 } from "@kaiachain/js-ext-core";
 import {
   KaiaTransactionSerializable,
   KaiaTransactionSerialized,
 } from "./types/transactions";
+import { convertSignatureToKaiaFormat } from "./utils";
 // move this to helper
-const convertSignatureToKaiaFormat = (
-  signature: Signature,
-  chainId: number
-): SignatureLike => {
-  const { r, s, yParity } = signature;
-  const v = Number(yParity) + chainId * 2 + 35;
-  return {
-    r,
-    s,
-    v,
-  };
-};
 
 export const serializers = {
   transaction: serializeTransaction,
@@ -53,19 +40,11 @@ export function serializeTransactionKaia(
       signature
     );
   }
-  
+
   const txObj: any = { ...transaction };
-  
-  // TODO: remove this to prepareTransactionRequest
-  if (transaction.maxFeePerGas && transaction.gas) {
-    // txObj.gasPrice = transaction.maxFeePerGas * transaction.gas;
-    txObj.gasPrice = 27500000000;
-    txObj.gasLimit = 210000;
-  }
 
   const klaytnTx = KlaytnTxFactory.fromObject(txObj);
   if (!signature) {
-    // this function is ran two times in signTransaction.
     return klaytnTx.sigRLP() as `0x${string}`;
   }
   klaytnTx.addSenderSig(convertSignatureToKaiaFormat(signature, txObj.chainId));
@@ -79,19 +58,13 @@ export function serializeTransactionForFeePayerKaia(expectedFeePayer: string) {
     transaction: KaiaTransactionSerializable,
     signature?: Signature
   ): KaiaTransactionSerialized {
-    
     const txObj: any = { ...transaction };
-    // TODO: remove this to prepareTransactionRequest
-    if (transaction.maxFeePerGas && transaction.gas) {
-      txObj.gasPrice = 27500000000;
-      txObj.gasLimit = 500000;
-    }
+
     txObj.feePayer = expectedFeePayer;
-    
+
     const klaytnTx = KlaytnTxFactory.fromObject(txObj);
 
     if (!signature) {
-      // this function is ran two times in signTransaction.
       return klaytnTx.sigFeePayerRLP() as `0x${string}`;
     }
     klaytnTx.addFeePayerSig(

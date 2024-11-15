@@ -2,7 +2,7 @@ import { http, createWalletClient } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { kairos } from "viem/chains";
 import { chainConfig, kaiaWalletAction } from "./viem-ext/kaia";
-import { formatKaia, parseKaia, toPeb, TxType } from "@kaiachain/js-ext-core";
+import { toPeb, TxType } from "@kaiachain/js-ext-core";
 // wallet that will populate the tx from field
 const senderWallet = createWalletClient({
   chain: { ...kairos, ...chainConfig },
@@ -10,7 +10,7 @@ const senderWallet = createWalletClient({
   account: privateKeyToAccount(
     "0x9ba8cb8f60044058a9e6f815c5c42d3a216f47044c61a1750b6d29ddc7f34bda"
   ),
-});
+}).extend(kaiaWalletAction());
 // wallet that sign the tx.
 const txWallet = createWalletClient({
   chain: { ...kairos, ...chainConfig },

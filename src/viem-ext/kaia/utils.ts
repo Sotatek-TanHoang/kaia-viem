@@ -1,8 +1,9 @@
+import { Signature } from "viem";
 import {
   KaiaTransactionRequest,
   KaiaTransactionSerializable,
 } from "./types/transactions";
-import { parseTransaction } from "@kaiachain/js-ext-core";
+import { parseTransaction, SignatureLike } from "@kaiachain/js-ext-core";
 export function isKaiaTransactionRequest(
   transactionOrRLP: string | KaiaTransactionSerializable
 ): transactionOrRLP is KaiaTransactionRequest {
@@ -17,4 +18,17 @@ export async function getTransactionRequest(
     return parseTransaction(transactionOrRLP) as KaiaTransactionRequest;
   }
   throw new Error("Invalid transaction");
+}
+
+export function convertSignatureToKaiaFormat(
+  signature: Signature,
+  chainId: number
+): SignatureLike {
+  const { r, s, yParity } = signature;
+  const v = Number(yParity) + chainId * 2 + 35;
+  return {
+    r,
+    s,
+    v,
+  };
 }

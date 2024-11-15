@@ -8,10 +8,14 @@ export const formatters = {
       args: KaiaTransactionRequest
     ): Promise<KaiaTransactionRequest> {
       const transaction = {} as KaiaTransactionRequest;
-      if (args.type && isKlaytnTxType(args.type)) {
-        (transaction as any).type = 'legacy';
-        // transaction.value = args.value ?? 0;
-        // transaction.from = args.from;
+      if (
+        args.type &&
+        isKlaytnTxType(args.type) &&
+        (args as any).gas &&
+        args.maxFeePerGas
+      ) {
+        transaction.gasPrice = (args as any).gas * (args as any).maxFeePerGas;
+        transaction.gasLimit = 25000;
       }
       return transaction;
     },

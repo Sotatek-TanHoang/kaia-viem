@@ -3,26 +3,30 @@ import type {
   TransactionRequest as EthersTransactionRequest,
   TransactionResponse,
 } from "ethers";
-import { OneOf, Signature, TransactionSerializable } from "viem";
+import {
+  OneOf,
+  PrepareTransactionRequestParameters,
+  PrepareTransactionRequestReturnType,
+  Signature,
+  TransactionSerializable,
+} from "viem";
 import {
   TransactionSerializableCIP64,
   TransactionSerializableDeposit,
 } from "viem/chains";
 
 export interface KaiaTransactionResponse extends TransactionResponse {
-  type: TxType
+  type: TxType;
 }
 
-export interface KaiaTransactionRequest
-  extends Omit<
-    EthersTransactionRequest,
-    "maxFeePerGas" | "maxPriorityFeePerGas"
-  > {
+export interface KaiaTransactionRequest extends EthersTransactionRequest {
   txSignatures?: any[];
   feePayer?: string;
   feePayerSignatures?: any[];
-  type?: TxType
+  type?: TxType;
 }
+export type KaiaPrepareTransactionRequest = PrepareTransactionRequestParameters & KaiaTransactionRequest;
+export type KaiaPrepareTransactionReturnType = PrepareTransactionRequestReturnType & KaiaTransactionResponse;
 
 export type KaiaTransactionSerializable = OneOf<
   | TransactionSerializable
