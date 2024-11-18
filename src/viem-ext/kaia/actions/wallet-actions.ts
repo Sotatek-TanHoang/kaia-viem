@@ -5,12 +5,12 @@ import {
   Client,
   PrepareTransactionRequestParameters,
   PrepareTransactionRequestRequest,
-  PrepareTransactionRequestReturnType,
   Transport,
 } from "viem";
 import { signTransactionAsFeePayer } from "../methods/sign-transaction-as-fee-payer.js";
 import {
   KaiaPrepareTransactionRequest,
+  KaiaPrepareTransactionReturnType,
   KaiaTransactionSerializable,
 } from "../types/transactions.js";
 import { signTransaction } from "../methods/sign-transaction.js";
@@ -39,15 +39,7 @@ export type KaiaWalletAction<
       accountOverride,
       request
     >
-  ) => Promise<
-    PrepareTransactionRequestReturnType<
-      chain,
-      account,
-      chainOverride,
-      accountOverride,
-      request
-    >
-  >;
+  ) => Promise<KaiaPrepareTransactionReturnType>;
 };
 
 export function kaiaWalletAction() {

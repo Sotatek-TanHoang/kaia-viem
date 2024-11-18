@@ -2,7 +2,7 @@ import { http, createWalletClient } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { kairos } from "viem/chains";
 import { chainConfig, kaiaWalletAction } from "./viem-ext/kaia";
-import { TxType } from "@kaiachain/js-ext-core";
+import { toPeb, TxType } from "@kaiachain/js-ext-core";
 // wallet that will populate the tx from field
 const senderAddr = "0x82c6a8d94993d49cfd0c1d30f0f8caa65782cc7e";
 const senderPriv =
@@ -50,7 +50,7 @@ const feePayerWallet = createWalletClient({
   const txRequest = await wallet0.prepareTransactionRequest({
     account: wallet0.account,
     to: recieverAddr,
-    value: 0,
+    value: 1000000000000000000n,
     type: TxType.ValueTransfer,
     // type: TxType.FeeDelegatedValueTransfer,
   });
@@ -64,7 +64,7 @@ const feePayerWallet = createWalletClient({
 
   const signedTx3 = await wallet3.signTransaction(signedTx2 as any);
   console.log(signedTx3);
-  
+
   const sentTx = await wallet3.request({
     method: "kaia_sendRawTransaction" as any,
     params: [signedTx3],
@@ -77,7 +77,4 @@ const feePayerWallet = createWalletClient({
   //   params: [feePayerSignedTx],
   // });
   // console.log("fee delegated value transfer tx with role-based account", feePayerSentTx);
-
-
-
 })();

@@ -7,10 +7,7 @@ export const signTransaction = async (
   client: WalletClient,
   senderTxHashRLP: string | KaiaTransactionSerializable
 ): Promise<string> => {
-  const txObj = await getTransactionRequest(senderTxHashRLP);
-
-  // populate chain id since this field is omitted in rlp format.
-  txObj.chainId = client.chain?.id;
+  const txObj = await getTransactionRequest(client, senderTxHashRLP);
 
   if (client.account) {
     return client.account.signTransaction!(txObj as any, {

@@ -1,23 +1,31 @@
-import { Signature } from "viem";
+import { Client, Signature } from "viem";
 import {
   KaiaTransactionRequest,
   KaiaTransactionSerializable,
 } from "./types/transactions";
 import { parseTransaction, SignatureLike } from "@kaiachain/js-ext-core";
+import { assert } from "ethers";
 export function isKaiaTransactionRequest(
   transactionOrRLP: string | KaiaTransactionSerializable
 ): transactionOrRLP is KaiaTransactionRequest {
   return typeof transactionOrRLP === "object";
 }
 export async function getTransactionRequest(
+  client: Client,
   transactionOrRLP: KaiaTransactionSerializable | string
 ): Promise<KaiaTransactionRequest> {
+  let txObj: KaiaTransactionRequest;
   if (isKaiaTransactionRequest(transactionOrRLP)) {
-    return transactionOrRLP;
+    txObj = transactionOrRLP;
   } else if (typeof transactionOrRLP === "string") {
-    return parseTransaction(transactionOrRLP) as KaiaTransactionRequest;
+    txObj = parseTransaction(transactionOrRLP) as KaiaTransactionRequest;
+  } else {
+    throw new Error("Invalid transaction");
   }
-  throw new Error("Invalid transaction");
+  if (typeof client?.chain?.id !== "undefined") {
+    txObj.chainId = client.chain.id;
+  }
+  return txObj;
 }
 
 export function convertSignatureToKaiaFormat(
