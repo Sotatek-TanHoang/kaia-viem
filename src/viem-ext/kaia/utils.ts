@@ -4,7 +4,6 @@ import {
   KaiaTransactionSerializable,
 } from "./types/transactions";
 import { parseTransaction, SignatureLike } from "@kaiachain/js-ext-core";
-import { assert } from "ethers";
 export function isKaiaTransactionRequest(
   transactionOrRLP: string | KaiaTransactionSerializable
 ): transactionOrRLP is KaiaTransactionRequest {
@@ -15,13 +14,17 @@ export async function getTransactionRequest(
   transactionOrRLP: KaiaTransactionSerializable | string
 ): Promise<KaiaTransactionRequest> {
   let txObj: KaiaTransactionRequest;
-  if (isKaiaTransactionRequest(transactionOrRLP)) {
-    txObj = transactionOrRLP;
-  } else if (typeof transactionOrRLP === "string") {
-    txObj = parseTransaction(transactionOrRLP) as KaiaTransactionRequest;
-  } else {
-    throw new Error("Invalid transaction");
+  switch (typeof transactionOrRLP){
+    case 'string':
+      txObj = parseTransaction(transactionOrRLP) as KaiaTransactionRequest;
+      break;
+    case 'object':
+      txObj = transactionOrRLP as KaiaTransactionRequest;
+      break;
+    default:
+      throw new Error("Invalid transaction");
   }
+
   if (typeof client?.chain?.id !== "undefined") {
     txObj.chainId = client.chain.id;
   }

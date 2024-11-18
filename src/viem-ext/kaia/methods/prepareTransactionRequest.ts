@@ -4,7 +4,7 @@ export const prepareTransactionRequest = async (
   client: PublicClient,
   txObj: any
 ): Promise<any> => {
-  const req = await client.prepareTransactionRequest(txObj as any);
+  const req = await client.prepareTransactionRequest(txObj);
 
   req.gasPrice = await client.request({
     method: "klay_gasPrice",
