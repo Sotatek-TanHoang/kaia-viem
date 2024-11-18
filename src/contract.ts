@@ -19,7 +19,7 @@ const senderWallet = createWalletClient({
   account: privateKeyToAccount(
     "0x0e4ca6d38096ad99324de0dde108587e5d7c600165ae4cd6c2462c597458c2b8"
   ),
-});
+}).extend(kaiaWalletAction());
 const feePayerWallet = createWalletClient({
   chain: { ...kairos, ...chainConfig },
   transport: http(),
@@ -30,7 +30,9 @@ const feePayerWallet = createWalletClient({
 // Example usage
 (async () => {
   console.log(
-    await publicClient.getBalance({address:"0xA2a8854b1802D8Cd5De631E690817c253d6a9153"})
+    await publicClient.getBalance({
+      address: "0xA2a8854b1802D8Cd5De631E690817c253d6a9153",
+    })
   );
 
   const contractAddr = "0x95Be48607498109030592C08aDC9577c7C2dD505";
@@ -55,6 +57,8 @@ const feePayerWallet = createWalletClient({
     value: 0,
     data,
   });
+  console.log("preparedTx", tx);
+
   const signedTx = await senderWallet.signTransaction(tx as any);
 
   const sentTx = await senderWallet.request({
@@ -76,7 +80,7 @@ const feePayerWallet = createWalletClient({
   const feePayerSignedTx = await feePayerWallet.signTransactionAsFeePayer(
     signedTx2 as any
   );
-  console.log(feePayerSignedTx,123);
+  console.log(feePayerSignedTx, 123);
 
   const sentFeePayerTx = await feePayerWallet.request({
     method: "kaia_sendRawTransaction" as any,

@@ -25,7 +25,7 @@ export interface KaiaTransactionRequest extends EthersTransactionRequest {
   feePayerSignatures?: any[];
   type?: TxType;
 }
-export type KaiaPrepareTransactionRequest = PrepareTransactionRequestParameters & KaiaTransactionRequest;
+export type KaiaPrepareTransactionRequest = PrepareTransactionRequestParameters;
 export type KaiaPrepareTransactionReturnType = PrepareTransactionRequestReturnType & KaiaTransactionResponse;
 
 export type KaiaTransactionSerializable = OneOf<
