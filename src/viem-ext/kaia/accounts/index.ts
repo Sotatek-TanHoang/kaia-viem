@@ -1,4 +1,4 @@
-import { PrivateKeyAccount } from "viem";
+import type { PrivateKeyAccount } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 
 export function kaiaAccount(

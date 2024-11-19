@@ -1,9 +1,10 @@
-import { http, createWalletClient } from "viem";
+import { http, createWalletClient, rpcSchema } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { kairos } from "viem/chains";
 import { chainConfig, kaiaWalletAction } from "./viem-ext/kaia";
 import { AccountKeyType, TxType } from "@kaiachain/js-ext-core";
 import { ethers } from "ethers";
+import type { CustomRpcSchema } from "./viem-ext/kaia/rpc-schema";
 
 const senderWallet = createWalletClient({
   chain: { ...kairos, ...chainConfig },
@@ -15,6 +16,7 @@ const senderWallet = createWalletClient({
 const feePayerWallet = createWalletClient({
   chain: { ...kairos, ...chainConfig },
   transport: http(),
+  rpcSchema: rpcSchema<CustomRpcSchema>(),
   account: privateKeyToAccount(
     "0x9435261ed483b6efa3886d6ad9f64c12078a0e28d8d80715c773e16fc000cff4"
   ),
@@ -26,15 +28,15 @@ const feePayerWallet = createWalletClient({
     value: 123,
     type: TxType.FeeDelegatedValueTransfer,
   });
-  const signedTx = await senderWallet.signTransaction(txRequest as any);
+  const signedTx = await senderWallet.signTransaction(txRequest);
   console.log(signedTx);
-  
+
   const feePayerSignedTx = await feePayerWallet.signTransactionAsFeePayer(
-    signedTx as any
+    signedTx
   );
   const res = await feePayerWallet.request({
-    method: "kaia_sendRawTransaction" as any,
-    params: [feePayerSignedTx as any],
+    method: "kaia_sendRawTransaction",
+    params: [feePayerSignedTx],
   });
   console.log("value transfer tx", res);
 
@@ -52,16 +54,15 @@ const feePayerWallet = createWalletClient({
       type: AccountKeyType.Public,
       key: pub,
     },
-
   });
-  const signedTx2 = await senderWallet.signTransaction(txRequest2 as any);
+  const signedTx2 = await senderWallet.signTransaction(txRequest2);
 
   const feePayerSignedTx2 = await feePayerWallet.signTransactionAsFeePayer(
-    signedTx2 as any
+    signedTx2
   );
   const res2 = await feePayerWallet.request({
-    method: "kaia_sendRawTransaction" as any,
-    params: [feePayerSignedTx2 as any],
+    method: "kaia_sendRawTransaction",
+    params: [feePayerSignedTx2],
   });
   console.log("acount update tx", res2);
 })();

@@ -1,16 +1,16 @@
 import {
-  ChainSerializers,
-  TransactionSerializable,
+  type ChainSerializers,
+  type TransactionSerializable,
   serializeTransaction as serializeTransactionDefault,
-  Signature,
+  type Signature,
 } from "viem";
 import {
   isKlaytnTxType,
   KlaytnTxFactory,
-  TxType,
+  type TxType,
   isFeePayerSigTxType,
 } from "@kaiachain/js-ext-core";
-import {
+import type {
   KaiaTransactionSerializable,
   KaiaTransactionSerialized,
 } from "./types/transactions";
@@ -41,6 +41,7 @@ export function serializeTransactionKaia(
     );
   }
 
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   const txObj: any = { ...transaction };
 
   const klaytnTx = KlaytnTxFactory.fromObject(txObj);
@@ -54,10 +55,11 @@ export function serializeTransactionKaia(
   return klaytnTx.txHashRLP() as `0x${string}`;
 }
 export function serializeTransactionForFeePayerKaia(expectedFeePayer: string) {
-  return function (
+  return (
     transaction: KaiaTransactionSerializable,
     signature?: Signature
-  ): KaiaTransactionSerialized {
+  ): KaiaTransactionSerialized => {
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     const txObj: any = { ...transaction };
 
     txObj.feePayer = expectedFeePayer;
