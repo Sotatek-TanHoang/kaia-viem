@@ -21,6 +21,6 @@ const legacyWallet = createWalletClient({
 
   console.log("populated legacy request", legacyRequest);
 
-  const sentLegacyTx = await legacyWallet.sendTransaction(legacyRequest as any);
+  const sentLegacyTx = await legacyWallet.sendTransaction(legacyRequest);
   console.log("value transfer legacy tx", sentLegacyTx);
 })();

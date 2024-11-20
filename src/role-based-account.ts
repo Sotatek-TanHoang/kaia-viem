@@ -1,8 +1,9 @@
-import { http, createWalletClient } from "viem";
+import { http, createWalletClient, rpcSchema } from "viem";
 import { kairos } from "viem/chains";
 import { chainConfig, kaiaWalletAction } from "./viem-ext/kaia";
 import { toPeb, TxType } from "@kaiachain/js-ext-core";
 import { kaiaAccount } from "./viem-ext/kaia/accounts";
+import type { CustomRpcSchema } from "./viem-ext/kaia/rpc-schema";
 
 // the wallet that store Kaia balance
 // const userWallet = createWalletClient({
@@ -17,8 +18,9 @@ import { kaiaAccount } from "./viem-ext/kaia/accounts";
 const txRoleBasedWallet = createWalletClient({
   chain: { ...kairos, ...chainConfig },
   transport: http(),
+  rpcSchema: rpcSchema<CustomRpcSchema>(),
   account: kaiaAccount(
-    "0x5bd2fb3c21564c023a4a735935a2b7a238c4ccea",// actual public address "0xc1bc4440c4d4010be0ba1cfb014ab8cd1d62c470", 
+    "0x5bd2fb3c21564c023a4a735935a2b7a238c4ccea", // actual public address "0xc1bc4440c4d4010be0ba1cfb014ab8cd1d62c470",
     "0x7239c8977558ed1d5789100a4a837c7f2fa464196246569d73149648de57cbfe"
   ),
 }).extend(kaiaWalletAction());
@@ -28,13 +30,12 @@ const txRoleBasedWallet = createWalletClient({
     to: "0xb41319B12ba00e14a54CF3eE6C98c3EC9E27e0CA",
     value: toPeb("0", "kaia"),
     type: TxType.ValueTransfer,
-    // gasLimit: 21000,
   });
   console.log("txRequest", txRequest);
 
-  const signedTx = await txRoleBasedWallet.signTransaction(txRequest as any);
+  const signedTx = await txRoleBasedWallet.signTransaction(txRequest);
   const sentTx = await txRoleBasedWallet.request({
-    method: "kaia_sendRawTransaction" as any,
+    method: "kaia_sendRawTransaction",
     params: [signedTx],
   });
   console.log("value transfer tx with role-based account", sentTx);

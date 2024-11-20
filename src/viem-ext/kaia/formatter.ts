@@ -1,5 +1,5 @@
-import { ChainFormatters, defineTransactionRequest } from "viem";
-import { KaiaTransactionRequest } from "./types/transactions";
+import { type ChainFormatters, defineTransactionRequest } from "viem";
+import type { KaiaTransactionRequest } from "./types/transactions";
 
 export const formatters = {
   transactionRequest: /*#__PURE__*/ defineTransactionRequest({
@@ -7,7 +7,7 @@ export const formatters = {
       args: KaiaTransactionRequest
     ): Promise<KaiaTransactionRequest> {
       const transaction = {} as KaiaTransactionRequest;
-      
+
       return transaction;
     },
   }),

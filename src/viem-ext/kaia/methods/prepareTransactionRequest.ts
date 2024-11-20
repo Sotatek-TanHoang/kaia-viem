@@ -1,22 +1,42 @@
-import { Client, PublicClient, toHex } from "viem";
+import {
+  type PrepareTransactionRequestParameters,
+  type PrepareTransactionRequestReturnType,
+  toHex,
+} from "viem";
+import type { KaiaClient } from "../types/client";
+import type { KaiaTransactionRequest } from "../types/transactions";
 
 export const prepareTransactionRequest = async (
-  client: PublicClient,
-  txObj: any
-): Promise<any> => {
+  client: KaiaClient,
+  txObj: PrepareTransactionRequestParameters &
+    Pick<KaiaTransactionRequest, "gasLimit" | "gasPrice" | "key" | "type">
+): Promise<PrepareTransactionRequestReturnType> => {
   const req = await client.prepareTransactionRequest(txObj);
 
-  req.gasPrice = await client.request({
-    method: "klay_gasPrice",
-  } as any);
-
   if (typeof txObj.gasLimit === "undefined") {
-    req.gasLimit = await getEstimateGasPayload(client, req);
+    const gasPrice = await client.request({
+      method: "klay_gasPrice",
+      params: [],
+    });
+    const gasLimit = await getEstimateGasPayload(client, {
+      from: req?.from,
+      to: req?.to,
+      data: req?.data,
+      key: txObj?.key,
+      type: txObj?.type,
+    });
+    Object.assign(req, { gasPrice, gasLimit });
   }
   return req;
 };
-const getEstimateGasPayload = async (client: Client, txObj: any) => {
-  const result: any = {};
+const getEstimateGasPayload = async (
+  client: KaiaClient,
+  txObj: Pick<
+    KaiaTransactionRequest,
+    "key" | "from" | "to" | "value" | "data" | "type"
+  >
+) => {
+  const result: Partial<KaiaTransactionRequest> = {};
   if (txObj.from) {
     result.from = txObj.from;
   }
@@ -39,6 +59,6 @@ const getEstimateGasPayload = async (client: Client, txObj: any) => {
   const estimatedGas = (await client.request({
     method: "klay_estimateGas",
     params: [result],
-  } as any)) as `0x${string}`;
-  return Math.floor(parseInt(estimatedGas, 16) * 2.5);
+  })) as `0x${string}`;
+  return Math.floor(Number.parseInt(estimatedGas, 16) * 2.5);
 };

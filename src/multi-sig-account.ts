@@ -1,8 +1,9 @@
-import { http, createWalletClient } from "viem";
+import { http, createWalletClient, rpcSchema } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { kairos } from "viem/chains";
 import { chainConfig, kaiaWalletAction } from "./viem-ext/kaia";
-import { toPeb, TxType } from "@kaiachain/js-ext-core";
+import { TxType } from "@kaiachain/js-ext-core";
+import type { CustomRpcSchema } from "./viem-ext/kaia/rpc-schema";
 // wallet that will populate the tx from field
 const senderAddr = "0x82c6a8d94993d49cfd0c1d30f0f8caa65782cc7e";
 const senderPriv =
@@ -18,6 +19,7 @@ const recieverAddr = "0xc40b6909eb7085590e1c26cb3becc25368e249e9";
 const wallet0 = createWalletClient({
   chain: { ...kairos, ...chainConfig },
   transport: http(),
+  rpcSchema: rpcSchema<CustomRpcSchema>(),
   account: privateKeyToAccount(senderPriv),
 }).extend(kaiaWalletAction());
 
@@ -34,6 +36,7 @@ const wallet2 = createWalletClient({
 const wallet3 = createWalletClient({
   chain: { ...kairos, ...chainConfig },
   transport: http(),
+  rpcSchema: rpcSchema<CustomRpcSchema>(),
   account: privateKeyToAccount(senderNewPriv3),
 }).extend(kaiaWalletAction());
 
@@ -56,24 +59,24 @@ const feePayerWallet = createWalletClient({
   });
   console.log("txRequest", txRequest);
 
-  const signedTx1 = await wallet1.signTransaction(txRequest as any);
+  const signedTx1 = await wallet1.signTransaction(txRequest);
   console.log(signedTx1);
 
-  const signedTx2 = await wallet2.signTransaction(signedTx1 as any);
+  const signedTx2 = await wallet2.signTransaction(signedTx1);
   console.log(signedTx2);
 
-  const signedTx3 = await wallet3.signTransaction(signedTx2 as any);
+  const signedTx3 = await wallet3.signTransaction(signedTx2);
   console.log(signedTx3);
 
   const sentTx = await wallet3.request({
-    method: "kaia_sendRawTransaction" as any,
+    method: "kaia_sendRawTransaction",
     params: [signedTx3],
   });
   console.log("value transfer tx with role-based account", sentTx);
 
   // const feePayerSignedTx=await feePayerWallet.signTransactionAsFeePayer(signedTx3)
   // const feePayerSentTx = await wallet3.request({
-  //   method: "kaia_sendRawTransaction" as any,
+  //   method: "kaia_sendRawTransaction",
   //   params: [feePayerSignedTx],
   // });
   // console.log("fee delegated value transfer tx with role-based account", feePayerSentTx);
