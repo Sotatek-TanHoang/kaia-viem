@@ -1,9 +1,8 @@
 import { http, createWalletClient } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { kairos } from "viem/chains";
-import { chainConfig } from "./viem-ext/kaia";
 const legacyWallet = createWalletClient({
-  chain: { ...kairos, ...chainConfig },
+  chain: kairos,
   transport: http(),
   account: privateKeyToAccount(
     "0x28d06bfebe5447d798ec7d1f208a045a15a1d6872b2a3cbb74cc896817bbb90d"

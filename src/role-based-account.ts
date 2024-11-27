@@ -1,13 +1,12 @@
 import { http, createWalletClient, rpcSchema } from "viem";
 import { kairos } from "viem/chains";
-import { chainConfig, kaiaWalletAction } from "./viem-ext/kaia";
 import { toPeb, TxType } from "@kaiachain/js-ext-core";
-import { kaiaAccount } from "./viem-ext/kaia/accounts";
-import type { CustomRpcSchema } from "./viem-ext/kaia/rpc-schema";
+import { type KaiaRpcSchema, kaiaWalletAction } from "viem/kaia";
+import { kaiaAccount } from "./type/accounts";
 
 // the wallet that store Kaia balance
 // const userWallet = createWalletClient({
-//   chain: { ...kairos, ...chainConfig },
+//   chain: kairos,
 //   transport: http(),
 //   account: kaiaAccount(
 //     "0x5bd2fb3c21564c023a4a735935a2b7a238c4ccea",
@@ -16,9 +15,9 @@ import type { CustomRpcSchema } from "./viem-ext/kaia/rpc-schema";
 // }).extend(kaiaWalletAction());
 // the wallet that pay tx fee
 const txRoleBasedWallet = createWalletClient({
-  chain: { ...kairos, ...chainConfig },
+  chain: kairos,
   transport: http(),
-  rpcSchema: rpcSchema<CustomRpcSchema>(),
+  rpcSchema: rpcSchema<KaiaRpcSchema>(),
   account: kaiaAccount(
     "0x5bd2fb3c21564c023a4a735935a2b7a238c4ccea", // actual public address "0xc1bc4440c4d4010be0ba1cfb014ab8cd1d62c470",
     "0x7239c8977558ed1d5789100a4a837c7f2fa464196246569d73149648de57cbfe"

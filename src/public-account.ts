@@ -1,16 +1,15 @@
 import { http, createWalletClient, rpcSchema } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { kairos } from "viem/chains";
-import { chainConfig, kaiaWalletAction } from "./viem-ext/kaia";
+import { type KaiaRpcSchema, kaiaWalletAction } from "viem/kaia";
 import { AccountKeyType, TxType } from "@kaiachain/js-ext-core";
 import { ethers } from "ethers";
-import type { CustomRpcSchema } from "./viem-ext/kaia/rpc-schema";
 const senderWallet = createWalletClient({
-  chain: { ...kairos, ...chainConfig },
+  chain: kairos,
   transport: http(),
-  rpcSchema: rpcSchema<CustomRpcSchema>(),
+  rpcSchema: rpcSchema<KaiaRpcSchema>(),
   account: privateKeyToAccount(
-    "0x0e4ca6d38096ad99324de0dde108587e5d7c600165ae4cd6c2462c597458c2b8"
+    "0x0e4ca6d38096ad99324de0dde108587e5d7c600165ae4cd6c2462c597458c2b8",
   ),
 }).extend(kaiaWalletAction());
 // Example usage
@@ -32,7 +31,7 @@ const senderWallet = createWalletClient({
   // account update
   const pub = ethers.SigningKey.computePublicKey(
     "0x0e4ca6d38096ad99324de0dde108587e5d7c600165ae4cd6c2462c597458c2b8",
-    true
+    true,
   );
   const txRequest2 = await senderWallet.prepareTransactionRequest({
     account: senderWallet.account,

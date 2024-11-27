@@ -1,9 +1,8 @@
 import { http, createWalletClient, rpcSchema } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { kairos } from "viem/chains";
-import { chainConfig, kaiaWalletAction } from "./viem-ext/kaia";
 import { TxType } from "@kaiachain/js-ext-core";
-import type { CustomRpcSchema } from "./viem-ext/kaia/rpc-schema";
+import { type KaiaRpcSchema, kaiaWalletAction } from "viem/kaia";
 // wallet that will populate the tx from field
 const senderAddr = "0x82c6a8d94993d49cfd0c1d30f0f8caa65782cc7e";
 const senderPriv =
@@ -17,32 +16,32 @@ const senderNewPriv3 =
 const recieverAddr = "0xc40b6909eb7085590e1c26cb3becc25368e249e9";
 
 const wallet0 = createWalletClient({
-  chain: { ...kairos, ...chainConfig },
+  chain: kairos,
   transport: http(),
-  rpcSchema: rpcSchema<CustomRpcSchema>(),
+  rpcSchema: rpcSchema<KaiaRpcSchema>(),
   account: privateKeyToAccount(senderPriv),
 }).extend(kaiaWalletAction());
 
 const wallet1 = createWalletClient({
-  chain: { ...kairos, ...chainConfig },
+  chain: kairos,
   transport: http(),
   account: privateKeyToAccount(senderNewPriv1),
 }).extend(kaiaWalletAction());
 const wallet2 = createWalletClient({
-  chain: { ...kairos, ...chainConfig },
+  chain: kairos,
   transport: http(),
   account: privateKeyToAccount(senderNewPriv2),
 }).extend(kaiaWalletAction());
 const wallet3 = createWalletClient({
-  chain: { ...kairos, ...chainConfig },
+  chain: kairos,
   transport: http(),
-  rpcSchema: rpcSchema<CustomRpcSchema>(),
+  rpcSchema: rpcSchema<KaiaRpcSchema>(),
   account: privateKeyToAccount(senderNewPriv3),
 }).extend(kaiaWalletAction());
 
 // fee delegated
 const feePayerWallet = createWalletClient({
-  chain: { ...kairos, ...chainConfig },
+  chain: kairos,
   transport: http(),
   account: privateKeyToAccount(
     "0x9435261ed483b6efa3886d6ad9f64c12078a0e28d8d80715c773e16fc000cff4"
