@@ -1,25 +1,34 @@
 {
-  "name": "test-viem",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "@tan_hoang/viem1",
+  "version": "1.3.0",
+  "main": "dist/cjs/index.js",
+  "types": "dist/esm/index.d.ts",
+  "sideEffects": false,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "dev": "tsx"
+    "test": "vitest ./tests/*.test.ts --maxConcurrency 1",
+    "build": "tsc && tsc -p tsconfig.cjs.json"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/esm/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "default": "./dist/cjs/index.js"
+    }
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@kaiachain/ethers-ext": "^1.1.0",
-    "@kaiachain/js-ext-core": "^1.1.0",
+    "@kaiachain/js-ext-core": "^2.0.1",
     "ethers": "^6.13.4",
     "lodash": "^4.17.21",
     "viem": "^2.21.41"
   },
   "devDependencies": {
+    "@kaiachain/viem-ext": "file:./dist/cjs",
     "@types/lodash": "^4.17.13",
     "tsx": "^4.19.2",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "vitest": "^3.0.7"
   }
 }

@@ -1,15 +1,23 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "useDefineForClassFields": true,
-    "module": "CommonJS",
-    "lib": ["ESNext", "DOM"],
-    "moduleResolution": "Node",
+    "target": "ES2020",
+    "module": "ES2020",
+    "moduleResolution": "bundler",
+    "declaration": true,
+    "outDir": "./dist/esm",
     "strict": true,
-    "outDir": "./dist", // Output directory for compiled files
-    "rootDir": "./src",
-    "skipLibCheck": true
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "rootDirs": [
+      "./src"
+    ],
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": [
+    "dist",
+    "example",
+    "node_modules"
+  ],
+  "include": [
+    "./src"
+  ]
 }
