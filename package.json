@@ -1,6 +1,6 @@
 {
-  "name": "@tan_hoang/viem1",
-  "version": "1.3.0",
+  "name": "@tan_hoang/viem-ext",
+  "version": "0.0.1",
   "main": "dist/cjs/index.js",
   "types": "dist/esm/index.d.ts",
   "sideEffects": false,

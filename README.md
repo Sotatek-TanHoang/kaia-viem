@@ -2,5 +2,7 @@
     - node `^18.20.4`
 2. Install
     - npm install
+    - npm run build
 3. Run example
-    - npx tsx ./src/`example.ts`
+    - cd examples
+    - node \<example>.js 
