@@ -26,22 +26,11 @@ const feePayerWallet = createWalletClient({
 });
 // Example usage
 (async () => {
-  console.log(
-    await publicClient.getBalance({
-      address: "0xA2a8854b1802D8Cd5De631E690817c253d6a9153",
-    })
-  );
   const contractAddr = "0x95Be48607498109030592C08aDC9577c7C2dD505";
+  const abi = [{ "inputs": [{ "internalType": "uint256", "name": "initNumber", "type": "uint256" }], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": false, "internalType": "uint256", "name": "number", "type": "uint256" }], "name": "SetNumber", "type": "event" }, { "inputs": [], "name": "increment", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "number", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "newNumber", "type": "uint256" }], "name": "setNumber", "outputs": [], "stateMutability": "nonpayable", "type": "function" }];
+
   const data = encodeFunctionData({
-    abi: [
-      {
-        inputs: [{ name: "newNumber", type: "uint256" }],
-        name: "setNumber",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-      },
-    ],
+    abi,
     args: [123n],
     functionName: "setNumber",
   });
@@ -65,10 +54,11 @@ const feePayerWallet = createWalletClient({
 
   // fee payer
   const tx2 = await senderWallet.prepareTransactionRequest({
-    type: TxType.FeeDelegatedSmartContractExecution,
+    type: TxType.FeeDelegatedSmartContractExecutionWithRatio,
+    feeRatio: 30,
+    value: 0,
     account: senderWallet.account,
     to: contractAddr,
-    value: 0,
     data,
   });
   const signedTx2 = await senderWallet.signTransaction(tx2);
@@ -83,4 +73,11 @@ const feePayerWallet = createWalletClient({
     params: [feePayerSignedTx],
   });
   console.log("fee payer contract execution tx", sentFeePayerTx);
+
+  const result = await publicClient.readContract({
+    address: contractAddr,
+    abi,
+    functionName: 'number'
+  })
+  console.log('Current contract value', result);
 })();

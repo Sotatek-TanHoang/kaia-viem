@@ -1,7 +1,7 @@
 
 import { Account, Address, Chain, Client, createPublicClient as createDefaultPublicClient, createWalletClient as createDefaultWalletClient, ParseAccount, PublicActions, PublicClient, RpcSchema, rpcSchema, Transport, UnionEvaluate, WalletClient } from "viem";
-import { CustomRpcSchema } from "./rpc-schema";
-import { KaiaWalletAction, kaiaWalletAction } from "./actions/wallet-actions";
+import { CustomRpcSchema } from "./rpc-schema.js";
+import { KaiaWalletAction, kaiaWalletAction } from "./actions/wallet-actions.js";
 
 export const createPublicClient = <
     transport extends Transport,

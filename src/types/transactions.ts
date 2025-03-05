@@ -15,9 +15,14 @@ export interface KaiaTransactionRequest
   account?: Account | string | undefined
 
   txSignatures?: string[]
+
   feePayer?: `${string}`
+  feeRatio?: number;
   feePayerSignatures?: string[]
+
   type?: TxType | number
+  humanReadable?: boolean
+  codeFormat?: number
   key?: {
     type: AccountKeyType
     keys?: {

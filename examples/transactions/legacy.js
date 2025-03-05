@@ -8,8 +8,6 @@ const legacyWallet = createWalletClient({
   ),
 });
 (async () => {
-  console.log(legacyWallet.account.address);
-
   // legacy tx
   const legacyRequest = await legacyWallet.prepareTransactionRequest({
     to: "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
