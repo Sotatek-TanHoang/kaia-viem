@@ -29,6 +29,19 @@ export async function getTransactionRequestForSigning(
   if (typeof client?.chain?.id !== 'undefined') {
     txObj.chainId = client.chain.id
   }
+  // wallet such as kaia wallet will pre populated the fee payers signature will zero value, which cause r,s,v error.
+  if (Array.isArray(txObj.feePayerSignatures)) {
+    txObj.feePayerSignatures = txObj.feePayerSignatures.filter((sig) => {
+      return !(
+        Array.isArray(sig) &&
+        sig.length == 3 &&
+        sig[0] == "0x01" &&
+        sig[1] == "0x" &&
+        sig[2] == "0x"
+      );
+    });
+  }
+
   return txObj
 }
 
@@ -88,11 +101,11 @@ export const getValidRawRpcObj = (
   return result
 }
 export const getEstimateGasPayload = async (
-  client: KaiaWalletClient | KaiaPublicClient,
+  client: KaiaWalletClient & KaiaPublicClient,
   txObj: ExactPartial<
     Pick<
       KaiaTransactionRequest,
-      'key' | 'from' | 'to' | 'value' | 'data' | 'type'
+      'key' | 'from' | 'to' | 'value' | 'data' | 'type' | 'codeFormat' | 'humanReadable' | 'feeRatio'
     >
   >,
 ) => {

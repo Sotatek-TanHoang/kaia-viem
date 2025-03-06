@@ -1,45 +1,31 @@
 import type { Client } from 'viem'
-import type { PublicClient } from 'viem'
 import type { WalletActions } from 'viem'
 import type { Transport } from 'viem'
 import type { Account } from 'viem'
-import type { Chain } from 'viem'
 import type { RpcSchema } from 'viem'
 import type { Prettify } from 'viem'
 import type { CustomRpcSchema } from '../rpc-schema.js'
-
+import { kaia, kairos } from '../chainConfig.js'
+import { KaiaWalletAction } from '../actions/wallet-actions.js'
+export type KaiaChain = typeof kaia | typeof kairos
 export type KaiaWalletClient<
-  transport extends Transport = Transport,
-  chain extends Chain | undefined = Chain,
   account extends Account | undefined = undefined,
-  rpcSchema extends RpcSchema | undefined = undefined,
 > = Prettify<
-  PublicClient &
   Client<
-    transport,
-    chain,
+    Transport,
+    KaiaChain,
     account,
-    rpcSchema extends RpcSchema
-    ? [...CustomRpcSchema, ...rpcSchema]
-    : CustomRpcSchema,
-    WalletActions<chain, account>
+    RpcSchema | CustomRpcSchema,
+    WalletActions<KaiaChain, account> & KaiaWalletAction
   >
 >
 
-export type KaiaPublicClient<
-  transport extends Transport = Transport,
-  chain extends Chain | undefined = Chain,
-  account extends Account | undefined = undefined,
-  rpcSchema extends RpcSchema | undefined = undefined,
-> = Prettify<
-  PublicClient &
+export type KaiaPublicClient = Prettify<
   Client<
-    transport,
-    chain,
-    account,
-    rpcSchema extends RpcSchema
-    ? [...CustomRpcSchema, ...rpcSchema]
-    : CustomRpcSchema,
-    WalletActions<chain, account>
+    Transport,
+    KaiaChain,
+    undefined,
+    RpcSchema & CustomRpcSchema,
+    WalletActions<KaiaChain, undefined> & KaiaWalletAction
   >
 >

@@ -3,23 +3,17 @@ import {
   getRpcTxObject,
   isKlaytnTxType,
 } from '@kaiachain/js-ext-core'
-import type { SendTransactionParameters, SendTransactionRequest, Chain } from 'viem'
+import type { LocalAccount, JsonRpcAccount } from 'viem'
 import { type Account, parseAccount } from 'viem/accounts'
 import type { KaiaWalletClient } from '../types/client.js'
 import type { KaiaTransactionRequest } from '../types/transactions.js'
 import { getValidRawRpcObj } from '../utils.js'
 import { signTransaction } from './sign-transaction.js'
-// import { getValidRawRpcObj } from "../utils.js";
 export const sendTransaction = async (
-  client: KaiaWalletClient,
-  tx: SendTransactionParameters<
-    Chain,
-    undefined,
-    Chain,
-    SendTransactionRequest<Chain, Chain>
-  >,
+  client: KaiaWalletClient<LocalAccount | JsonRpcAccount>,
+  tx: KaiaTransactionRequest,
 ): Promise<`0x${string}`> => {
-  if (!isKlaytnTxType((tx as unknown as KaiaTransactionRequest).type)) {
+  if (!isKlaytnTxType(tx.type)) {
     return client.sendTransaction(tx)
   }
   if (!tx.account && !client.account) {
@@ -41,7 +35,7 @@ export const sendTransaction = async (
             type: getKaikasTxType(tx.type),
           },
         ],
-      } as any,
+      },
       { retryCount: 0 },
     )) as `0x${string}`
   }

@@ -19,7 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@kaiachain/js-ext-core": "^2.0.1",
+    "@kaiachain/js-ext-core": "^2.0.0",
     "ethers": "^6.13.4",
     "lodash": "^4.17.21",
     "viem": "^2.21.41"

@@ -1,32 +1,27 @@
 
-import { Account, Address, Chain, Client, createPublicClient as createDefaultPublicClient, createWalletClient as createDefaultWalletClient, ParseAccount, PublicActions, PublicClient, RpcSchema, rpcSchema, Transport, UnionEvaluate, WalletClient } from "viem";
+import { createPublicClient as createDefaultPublicClient, createWalletClient as createDefaultWalletClient, JsonRpcAccount, LocalAccount, OneOf, rpcSchema, Transport, } from "viem";
 import { CustomRpcSchema } from "./rpc-schema.js";
-import { KaiaWalletAction, kaiaWalletAction } from "./actions/wallet-actions.js";
+import { kaiaWalletAction } from "./actions/wallet-actions.js";
+import { KaiaChain, KaiaPublicClient, KaiaWalletClient } from "./types/client.js";
 
-export const createPublicClient = <
-    transport extends Transport,
-    chain extends Chain | undefined = undefined,
->(data: {
-    transport: transport,
-    chain: chain,
-}) => {
+export const createPublicClient = (data: {
+    transport: Transport,
+    chain: KaiaChain,
+}): KaiaPublicClient => {
     return createDefaultPublicClient({
         ...data,
         rpcSchema: rpcSchema<CustomRpcSchema>()
-    }).extend(kaiaWalletAction());
+    }).extend(kaiaWalletAction() as any) as any;
 }
 
-export const createWalletClient = <
-    transport extends Transport,
-    chain extends Chain | undefined = undefined,
-    accountOrAddress extends Account | Address | undefined = undefined,
->(data: {
-    transport: Transport,
-    account?: accountOrAddress,
-    chain: chain,
-}) => {
+export const createWalletClient = <account extends OneOf<LocalAccount | JsonRpcAccount> = JsonRpcAccount>
+    (data: {
+        transport: Transport,
+        account?: account,
+        chain: KaiaChain,
+    }): KaiaWalletClient<account> => {
     return createDefaultWalletClient({
         ...data,
         rpcSchema: rpcSchema<CustomRpcSchema>()
-    }).extend(kaiaWalletAction())
+    } as any).extend(kaiaWalletAction() as any) as KaiaWalletClient<account>
 }

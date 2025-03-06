@@ -15,3 +15,5 @@ export * from '@kaiachain/js-ext-core'
 // override viem similar function
 export { parseTransaction, formatUnits } from '@kaiachain/js-ext-core'
 export { parseKaia, parseKaiaUnits, parseUnits } from '@kaiachain/js-ext-core/ethers-v6'
+export type { KaiaWalletClient, KaiaPublicClient } from './types/client.js'
+export { KaiaTransactionRequest, KaiaTransactionResponse, KaiaTransactionSerializable, KaiaTransactionSerialized } from './types/transactions.js'

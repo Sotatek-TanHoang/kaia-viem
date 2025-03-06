@@ -3,33 +3,26 @@ import {
   getRpcTxObject,
   isKlaytnTxType,
 } from '@kaiachain/js-ext-core'
-import type { Client, WalletActions, Transport, Chain, RpcSchema } from 'viem'
-import type { Account } from 'viem/accounts'
+import type { LocalAccount, JsonRpcAccount } from 'viem'
 import { serializeTransactionKaia } from '../serializer.js'
 import type { KaiaTransactionRequest } from '../types/transactions.js'
 import { getTransactionRequestForSigning } from '../utils.js'
+import { KaiaWalletClient } from '../types/client.js'
 
-export const signTransaction = async <
-  transport extends Transport = Transport,
-  chain extends Chain | undefined = Chain | undefined,
-  account extends Account | undefined = Account | undefined,
-  rpcSchema extends RpcSchema | undefined = undefined,
-  extended extends WalletActions | undefined = WalletActions | undefined,
->(
-  client: Client<transport, chain, account, rpcSchema, extended>,
+export const signTransaction = async (
+  client: KaiaWalletClient<LocalAccount | JsonRpcAccount>,
   senderTxHashRLP: string | KaiaTransactionRequest,
 ): Promise<string> => {
   const txObj = await getTransactionRequestForSigning(client, senderTxHashRLP)
 
-  // is local account
-  if (client?.account?.signTransaction) {
-    return client.account.signTransaction(txObj, {
+  if ((client?.account as LocalAccount)?.signTransaction) {
+    return (client.account as LocalAccount).signTransaction(txObj, {
       serializer: serializeTransactionKaia,
     })
   }
   // kaia tx type
   if (isKlaytnTxType(txObj.type)) {
-    return client.request(
+    const response = await client.request(
       {
         method: 'klay_signTransaction',
         params: [
@@ -38,13 +31,18 @@ export const signTransaction = async <
       } as any,
       { retryCount: 0 },
     )
+    if (typeof response === 'object') {
+
+      return (response as any)['rawTransaction'] as `0x${string}`
+    }
+    return response as `0x${string}`
   }
   // legacy tx
   return client.request(
     {
       method: 'eth_signTransaction',
       params: [txObj],
-    } as any,
+    },
     {
       retryCount: 0,
     },

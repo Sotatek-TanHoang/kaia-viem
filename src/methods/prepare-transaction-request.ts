@@ -5,32 +5,19 @@ import type {
   Chain
 } from 'viem'
 import type { Account } from 'viem/accounts'
-import type { KaiaChain } from '../formatter.js'
-import type { KaiaPublicClient, KaiaWalletClient } from '../types/client.js'
+import type { KaiaChain } from '../types/client.js'
+import type { KaiaPublicClient } from '../types/client.js'
 import { getEstimateGasPayload } from '../utils.js'
-import { KaiaTransactionRequest } from '../types/transactions.js'
 import { isKlaytnTxType } from '@kaiachain/js-ext-core'
+import { KaiaTransactionRequest, KaiaTransactionResponse } from '../types/transactions.js'
 
 export const prepareTransactionRequest = async <
-  chain extends Chain | undefined = Chain | undefined,
   account extends Account | undefined = Account | undefined,
-  chainOverride extends Chain | undefined = chain,
-  accountOverride extends Account | Address | undefined = account,
 >(
-  client: KaiaPublicClient | KaiaWalletClient,
-  txObj: PrepareTransactionRequestParameters<
-    chain,
-    account,
-    chainOverride,
-    accountOverride
-  >,
+  client: KaiaPublicClient,
+  txObj: KaiaTransactionRequest,
 ): Promise<
-  PrepareTransactionRequestReturnType<
-    chain,
-    account,
-    chainOverride,
-    accountOverride
-  >
+  KaiaTransactionResponse
 > => {
   const req = await client.prepareTransactionRequest(
     txObj as unknown as PrepareTransactionRequestParameters<
@@ -57,10 +44,5 @@ export const prepareTransactionRequest = async <
       type: req?.type,
     })
   }
-  return req as unknown as PrepareTransactionRequestReturnType<
-    chain,
-    account,
-    chainOverride,
-    accountOverride
-  >
+  return req as unknown as KaiaTransactionResponse;
 }
